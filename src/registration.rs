@@ -11,15 +11,13 @@ use sentin8::registration::{
 };
 use utoipa::OpenApi;
 
-const PG_ROLES: &[PgRole] = &[
-    PgRole {
-        scope: "bill8:risk:read,bill8:risk:write",
-        role: "bill8_risk_service",
-        bypass_rls: false,
-        database: "bill8",
-        cross_schema_grants: &[],
-    },
-];
+const PG_ROLES: &[PgRole] = &[PgRole {
+    scope: "bill8:risk:read,bill8:risk:write",
+    role: "bill8_risk_service",
+    bypass_rls: false,
+    database: "bill8",
+    cross_schema_grants: &[],
+}];
 
 const M2M_GRANTS: &[M2mGrant] = &[
     M2mGrant {
@@ -59,25 +57,78 @@ const M2M_GRANTS: &[M2mGrant] = &[
 ];
 
 const ADMIN_SCOPES: &[AdminScope] = &[
-    AdminScope::Typed { role: "bill8:risk:admin", scope: "bill8:risk:rules:read" },
-    AdminScope::Typed { role: "bill8:risk:admin", scope: "bill8:risk:rules:write" },
-    AdminScope::Typed { role: "bill8:risk:admin", scope: "bill8:risk:screenings:read" },
-    AdminScope::Typed { role: "bill8:risk:admin", scope: "bill8:risk:reviews:read" },
-    AdminScope::Typed { role: "bill8:risk:admin", scope: "bill8:risk:reviews:write" },
-    AdminScope::Typed { role: "bill8:risk:admin", scope: "bill8:risk:policy:read" },
-    AdminScope::Typed { role: "bill8:risk:admin", scope: "bill8:risk:policy:write" },
+    AdminScope::Typed {
+        role: "bill8:risk:admin",
+        scope: "bill8:risk:rules:read",
+    },
+    AdminScope::Typed {
+        role: "bill8:risk:admin",
+        scope: "bill8:risk:rules:write",
+    },
+    AdminScope::Typed {
+        role: "bill8:risk:admin",
+        scope: "bill8:risk:screenings:read",
+    },
+    AdminScope::Typed {
+        role: "bill8:risk:admin",
+        scope: "bill8:risk:reviews:read",
+    },
+    AdminScope::Typed {
+        role: "bill8:risk:admin",
+        scope: "bill8:risk:reviews:write",
+    },
+    AdminScope::Typed {
+        role: "bill8:risk:admin",
+        scope: "bill8:risk:policy:read",
+    },
+    AdminScope::Typed {
+        role: "bill8:risk:admin",
+        scope: "bill8:risk:policy:write",
+    },
 ];
 
 const ERROR_CODES: &[ErrorCode] = &[
-    ErrorCode { enum_name: "RiskReviewNotFound", error_code: "risk_review_not_found", status_code: 404 },
-    ErrorCode { enum_name: "RiskReviewAlreadyResolved", error_code: "risk_review_already_resolved", status_code: 409 },
+    ErrorCode {
+        enum_name: "RiskReviewNotFound",
+        error_code: "risk_review_not_found",
+        status_code: 404,
+    },
+    ErrorCode {
+        enum_name: "RiskReviewAlreadyResolved",
+        error_code: "risk_review_already_resolved",
+        status_code: 409,
+    },
 ];
 
 const ADMIN_UI_PAGES: &[AdminUiPage] = &[
-    AdminUiPage { route: "overview", label: "Overview", ui_endpoint: "/v1/admin/ui/overview", data_endpoint: "/v1/admin/overview", icon: "0xe1b1" },
-    AdminUiPage { route: "rules", label: "Rules", ui_endpoint: "/v1/admin/ui/rules", data_endpoint: "/v1/admin/rules", icon: "0xe8b8" },
-    AdminUiPage { route: "reviews", label: "Review Queue", ui_endpoint: "/v1/admin/ui/reviews", data_endpoint: "/v1/admin/reviews", icon: "0xe8b6" },
-    AdminUiPage { route: "screenings", label: "Screenings", ui_endpoint: "/v1/admin/ui/screenings", data_endpoint: "/v1/admin/screenings", icon: "0xe5ca" },
+    AdminUiPage {
+        route: "overview",
+        label: "Overview",
+        ui_endpoint: "/v1/admin/ui/overview",
+        data_endpoint: "/v1/admin/overview",
+        icon: "0xe1b1",
+    },
+    AdminUiPage {
+        route: "rules",
+        label: "Rules",
+        ui_endpoint: "/v1/admin/ui/rules",
+        data_endpoint: "/v1/admin/rules",
+        icon: "0xe8b8",
+    },
+    AdminUiPage {
+        route: "reviews",
+        label: "Review Queue",
+        ui_endpoint: "/v1/admin/ui/reviews",
+        data_endpoint: "/v1/admin/reviews",
+        icon: "0xe8b6",
+    },
+    AdminUiPage {
+        route: "screenings",
+        label: "Screenings",
+        ui_endpoint: "/v1/admin/ui/screenings",
+        data_endpoint: "/v1/admin/screenings",
+        icon: "0xe5ca",
+    },
 ];
 
 /// The scope-mirror Shield text.
@@ -118,7 +169,11 @@ pub fn print(section: Option<String>) -> anyhow::Result<()> {
             service_flag: "risk",
             pages: ADMIN_UI_PAGES,
         }),
-        sql_migrations: vec![SqlMigration { version: 1, name: "init", sql: SQL_1_INIT }],
+        sql_migrations: vec![SqlMigration {
+            version: 1,
+            name: "init",
+            sql: SQL_1_INIT,
+        }],
         pg_roles: PG_ROLES,
         audit_findings: None,
         service_actions: None,

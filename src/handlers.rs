@@ -80,10 +80,13 @@ pub async fn create_rule(
         &a,
         &headers,
         sentin8::shield::EvalTarget::new("bill8:risk:rules:write"),
-    ).await?;
+    )
+    .await?;
 
     let mut conn = state.pool.begin().await.map_err(err_db)?;
-    set_tenant_context(&mut conn, a.env_id()).await.map_err(err_db)?;
+    set_tenant_context(&mut conn, a.env_id())
+        .await
+        .map_err(err_db)?;
 
     let id = Uuid::new_v4();
     let row = sqlx::query(
@@ -136,10 +139,13 @@ pub async fn list_rules(
         &a,
         &headers,
         sentin8::shield::EvalTarget::new("bill8:risk:rules:read"),
-    ).await?;
+    )
+    .await?;
 
     let mut conn = state.pool.acquire().await.map_err(err_db)?;
-    set_tenant_context(&mut conn, a.env_id()).await.map_err(err_db)?;
+    set_tenant_context(&mut conn, a.env_id())
+        .await
+        .map_err(err_db)?;
 
     let rows = sqlx::query(
         "SELECT id, env_id, predicate, params, action, priority, enabled, created_at FROM risk.rules ORDER BY priority ASC LIMIT 500",
@@ -175,10 +181,13 @@ pub async fn screen(
         &a,
         &headers,
         sentin8::shield::EvalTarget::new("bill8:risk:screenings:write"),
-    ).await?;
+    )
+    .await?;
 
     let mut conn = state.pool.begin().await.map_err(err_db)?;
-    set_tenant_context(&mut conn, a.env_id()).await.map_err(err_db)?;
+    set_tenant_context(&mut conn, a.env_id())
+        .await
+        .map_err(err_db)?;
 
     // Load the ordered rule set and evaluate (pure, fail-closed).
     let rows = sqlx::query(
@@ -258,10 +267,13 @@ pub async fn list_reviews(
         &a,
         &headers,
         sentin8::shield::EvalTarget::new("bill8:risk:reviews:read"),
-    ).await?;
+    )
+    .await?;
 
     let mut conn = state.pool.acquire().await.map_err(err_db)?;
-    set_tenant_context(&mut conn, a.env_id()).await.map_err(err_db)?;
+    set_tenant_context(&mut conn, a.env_id())
+        .await
+        .map_err(err_db)?;
 
     let rows = sqlx::query(
         "SELECT id, env_id, screening_id, status, resolved_at, created_at FROM risk.reviews ORDER BY created_at DESC LIMIT 200",
@@ -308,7 +320,8 @@ pub async fn resolve_review(
         &a,
         &headers,
         sentin8::shield::EvalTarget::new("bill8:risk:reviews:write"),
-    ).await?;
+    )
+    .await?;
 
     let decision = body["decision"].as_str().unwrap_or("declined");
     let status = match decision {
@@ -317,7 +330,9 @@ pub async fn resolve_review(
     };
 
     let mut conn = state.pool.begin().await.map_err(err_db)?;
-    set_tenant_context(&mut conn, a.env_id()).await.map_err(err_db)?;
+    set_tenant_context(&mut conn, a.env_id())
+        .await
+        .map_err(err_db)?;
 
     // Guarded terminal transition — resolving twice is a 409, not a
     // second resolution (exactly-once semantics downstream).
@@ -347,7 +362,9 @@ pub async fn resolve_review(
     .map_err(err_db)?;
     let charge_ref = screening
         .and_then(|row| {
-            let ctx = row.get::<sqlx::types::Json<serde_json::Value>, _>("charge_context").0;
+            let ctx = row
+                .get::<sqlx::types::Json<serde_json::Value>, _>("charge_context")
+                .0;
             ctx.get("charge_id")
                 .and_then(|v| v.as_str())
                 .map(|s| s.to_string())
@@ -371,7 +388,9 @@ pub async fn resolve_review(
     .map_err(err_db)?;
 
     conn.commit().await.map_err(err_db)?;
-    Ok(Json(serde_json::json!({ "review_id": id, "status": status })))
+    Ok(Json(
+        serde_json::json!({ "review_id": id, "status": status }),
+    ))
 }
 
 fn row_to_rule(row: &sqlx::postgres::PgRow) -> Rule {
@@ -379,7 +398,9 @@ fn row_to_rule(row: &sqlx::postgres::PgRow) -> Rule {
         id: row.get("id"),
         env_id: row.get("env_id"),
         predicate: row.get("predicate"),
-        params: row.get::<sqlx::types::Json<serde_json::Value>, _>("params").0,
+        params: row
+            .get::<sqlx::types::Json<serde_json::Value>, _>("params")
+            .0,
         action: row.get("action"),
         priority: row.get("priority"),
         enabled: row.get("enabled"),
@@ -391,7 +412,9 @@ fn row_to_screening(row: &sqlx::postgres::PgRow) -> Screening {
     Screening {
         id: row.get("id"),
         env_id: row.get("env_id"),
-        charge_context: row.get::<sqlx::types::Json<serde_json::Value>, _>("charge_context").0,
+        charge_context: row
+            .get::<sqlx::types::Json<serde_json::Value>, _>("charge_context")
+            .0,
         outcome: row.get("outcome"),
         matched_rule_id: row.get("matched_rule_id"),
         created_at: row.get("created_at"),

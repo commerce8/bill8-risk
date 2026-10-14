@@ -11,13 +11,11 @@ use crate::handlers;
 
 /// The risk service's OpenAPI document.
 #[derive(OpenApi)]
-#[openapi(
-    paths(
-        handlers::create_rule,
-        handlers::list_rules,
-        handlers::screen,
-        handlers::list_reviews,
-        handlers::resolve_review,
-    )
-)]
+#[openapi(paths(
+    handlers::create_rule,
+    handlers::list_rules,
+    handlers::screen,
+    handlers::list_reviews,
+    handlers::resolve_review,
+))]
 pub struct RiskOpenApi;

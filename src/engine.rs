@@ -60,10 +60,16 @@ pub fn evaluate(rules: &[Rule], context: &serde_json::Value) -> Decision {
 fn matches_or_malformed(rule: &Rule, context: &serde_json::Value) -> (bool, bool) {
     match rule.predicate.as_str() {
         "amount_above" => {
-            let Some(threshold) = rule.params["threshold"].as_str().and_then(|s| Decimal::from_str_exact(s).ok()) else {
+            let Some(threshold) = rule.params["threshold"]
+                .as_str()
+                .and_then(|s| Decimal::from_str_exact(s).ok())
+            else {
                 return (false, true); // malformed threshold → block
             };
-            let Some(amount) = context["amount"].as_str().and_then(|s| Decimal::from_str_exact(s).ok()) else {
+            let Some(amount) = context["amount"]
+                .as_str()
+                .and_then(|s| Decimal::from_str_exact(s).ok())
+            else {
                 return (false, true); // malformed context → block
             };
             (amount > threshold, false)

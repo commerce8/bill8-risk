@@ -53,12 +53,17 @@ impl RiskConfig {
                 .expect("BILL8_RISK_PORT must be a valid u16"),
             database_url: env::var("BILL8_RISK_DATABASE_URL")
                 .or_else(|_| env::var("DATABASE_URL"))
-                .unwrap_or_else(|_| sentin8::config::Sentin8Config::default_database_url().to_string()),
+                .unwrap_or_else(|_| {
+                    sentin8::config::Sentin8Config::default_database_url().to_string()
+                }),
             sentin8_auth_issuer: issuer.clone(),
             sentin8_auth_jwks_url: env::var("SENTIN8_AUTH_JWKS_URL")
                 .unwrap_or_else(|_| cfg.sentin8_auth_jwks_url()),
             sentin8_bus_url: env::var("SENTIN8_BUS_URL").unwrap_or_else(|_| cfg.sentin8_bus_url()),
-            sentin8_auth_client: AuthClient::new(ClientOptions { base_url: issuer.clone(), ..Default::default() }),
+            sentin8_auth_client: AuthClient::new(ClientOptions {
+                base_url: issuer.clone(),
+                ..Default::default()
+            }),
             m2m_http: None,
         }
     }
