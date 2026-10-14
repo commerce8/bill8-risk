@@ -1,0 +1,8 @@
+{
+  "vertical": "bill8",
+  "services": [
+    {
+      "service_type": "bill8:risk"
+    }
+  ]
+}
