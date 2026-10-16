@@ -84,17 +84,30 @@ CREATE TRIGGER risk_outbox_notify AFTER INSERT ON risk.outbox
     FOR EACH ROW EXECUTE FUNCTION risk.notify_outbox_changed();
 
 CREATE TABLE IF NOT EXISTS risk.audit_journal (
-    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    env_id      UUID,
-    action      TEXT NOT NULL,
-    actor       TEXT,
-    subject_type TEXT,
-    subject_id  TEXT,
-    detail      JSONB NOT NULL DEFAULT '{}',
-    created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
-    pushed      BOOLEAN NOT NULL DEFAULT false
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    env_id          UUID NOT NULL,
+    action          TEXT NOT NULL,
+    target_resource_type TEXT,
+    target_resource_id    TEXT,
+    actor_user_id   TEXT,
+    actor_subject_type TEXT,
+    severity        TEXT NOT NULL DEFAULT 'info',
+    correlation_id  TEXT,
+    before_state    JSONB,
+    after_state     JSONB,
+    details         JSONB,
+    pushed          BOOLEAN NOT NULL DEFAULT false,
+    pushed_at       TIMESTAMPTZ,
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-CREATE INDEX IF NOT EXISTS idx_risk_audit_journal_unpushed ON risk.audit_journal (created_at) WHERE pushed = false;
+CREATE INDEX IF NOT EXISTS idx_risk_audit_journal_unpushed
+    ON risk.audit_journal (created_at) WHERE pushed = false;
+ALTER TABLE risk.audit_journal ENABLE ROW LEVEL SECURITY;
+ALTER TABLE risk.audit_journal FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS audit_journal_dml ON risk.audit_journal;
+CREATE POLICY audit_journal_dml ON risk.audit_journal
+    USING (sentin8_context_initialized() AND env_id = sentin8_current_env_id())
+    WITH CHECK (sentin8_context_initialized() AND env_id = sentin8_current_env_id());
 -- ── Role grants (schema-ownership convention, bank8-ledger's form) ─────
 DO $$
 BEGIN
