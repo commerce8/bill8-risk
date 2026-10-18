@@ -12,6 +12,7 @@ use crate::handlers;
 /// The risk service's OpenAPI document.
 #[derive(OpenApi)]
 #[openapi(paths(
+    handlers::health,
     handlers::create_rule,
     handlers::list_rules,
     handlers::screen,
