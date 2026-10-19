@@ -8,13 +8,16 @@
 use axum::extract::{Path, State};
 use axum::http::{HeaderMap, StatusCode};
 use axum::Json;
-use bill8::risk::contracts::{CreateRuleRequest, Review, Rule, ScreenRequest, Screening};
+use bill8::risk::contracts::{
+    CreateRuleRequest, ResolveReviewRequest, Review, Rule, ScreenRequest, Screening,
+};
 use sqlx::Row;
 use uuid::Uuid;
 
 use crate::auth;
 use crate::engine::{evaluate, Decision};
 use crate::policy::Engine;
+use bill8::wire::contracts::HealthBuild;
 use std::sync::Arc;
 
 use crate::config::RiskConfig;
@@ -53,17 +56,19 @@ pub fn err_db(e: sqlx::Error) -> (StatusCode, String) {
     get,
     path = "/v1/health",
     responses(
-        (status = 200, description = "Liveness (version, build)", body = serde_json::Value),
+        (status = 200, description = "Liveness (status, service, version, build)", body = bill8::wire::contracts::HealthBuild),
     ),
     security(),
     tag = "meta",
 )]
 /// Health probe payload.
-pub async fn health() -> axum::Json<serde_json::Value> {
-    axum::Json(serde_json::json!({
-        "status": "ok",
-        "service": "risk",
-        "version": sentin8::build_info::id(), "build": sentin8::build_info::build_hash() }))
+pub async fn health() -> axum::Json<HealthBuild> {
+    axum::Json(HealthBuild {
+        status: "ok".to_string(),
+        service: "risk".to_string(),
+        version: sentin8::build_info::id(),
+        build: sentin8::build_info::build_hash().to_string(),
+    })
 }
 
 /// `POST /v1/rules` - create a rule.
@@ -308,7 +313,7 @@ pub async fn list_reviews(
 #[utoipa::path(
     post,
     path = "/v1/reviews/{id}/resolve",
-    request_body = serde_json::Value,
+    request_body = ResolveReviewRequest,
     responses(
         (status = 200, description = "Review resolved"),
         (status = 409, description = "Already resolved"),
@@ -321,7 +326,7 @@ pub async fn resolve_review(
     State(state): State<AppState>,
     headers: HeaderMap,
     Path(id): Path<Uuid>,
-    Json(body): Json<serde_json::Value>,
+    Json(body): Json<ResolveReviewRequest>,
 ) -> Result<Json<serde_json::Value>, (StatusCode, String)> {
     let a = auth::verify_token(&state.config, &headers).await?;
     crate::policy::require(
@@ -332,9 +337,8 @@ pub async fn resolve_review(
     )
     .await?;
 
-    let decision = body["decision"].as_str().unwrap_or("declined");
-    let status = match decision {
-        "approve" | "approved" => "approved",
+    let status = match body.decision.as_deref() {
+        Some("approve") | Some("approved") => "approved",
         _ => "declined",
     };
 
