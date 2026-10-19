@@ -1,4 +1,4 @@
-# Bill8:Risk — Detailed Design Document
+# Bill8:Risk - Detailed Design Document
 
 ## 1. Scope & Context
 
@@ -66,9 +66,9 @@ stateDiagram-v2
 ```
 
 **Producer tables** (platform contracts, `risk` leaf schema):
-`risk.outbox` (DBX producer path — architecture-principles §6.7) and
+`risk.outbox` (DBX producer path - architecture-principles §6.7) and
 `risk.audit_journal` (the 15-column contract of
-`sentin8_audit::audit_journal_sql`, AUDJOUR-1 — env-pinned RLS, drained
+`sentin8_audit::audit_journal_sql`, AUDJOUR-1 - env-pinned RLS, drained
 to Sys `POST /v1/audit` by the shell's boot-8c pusher).
 
 ## 4. API Surface
@@ -78,7 +78,7 @@ to Sys `POST /v1/audit` by the shell's boot-8c pusher).
 | Rules | `/v1/rules` | `bill8:risk:rules:{read,write}` | `rule:created/updated` |
 | Screenings | `/v1/screenings` | `bill8:risk:screenings:read` (write is M2M) | `screening:created` |
 | Reviews | `/v1/reviews` | `bill8:risk:reviews:{read,write}` | `review:opened/resolved` |
-| Internal | `/v1/internal/*` | M2M | — |
+| Internal | `/v1/internal/*` | M2M | - |
 
 ## 5. Cross-Cutting Concerns
 
@@ -93,12 +93,12 @@ to Sys `POST /v1/audit` by the shell's boot-8c pusher).
 flowchart TD
     EVAL_FAIL["rule evaluation error"] -->|"fail-closed"| BLOCK["screening returns block"]
     CRASH["crash mid-tx"] -->|"atomic"| RB["screening + review roll back"]
-    RELAY_FAIL["Bus outage"] -->|"producer"| OUTBOX["risk.outbox persists — retry ≤10"]
+    RELAY_FAIL["Bus outage"] -->|"producer"| OUTBOX["risk.outbox persists - retry ≤10"]
 ```
 
 ## 7. Concurrency & Performance Model
 
-- Pool cap 3; screening is on the payments hot path — evaluation is
+- Pool cap 3; screening is on the payments hot path - evaluation is
   in-memory and pure (no row locks), results persisted best-effort.
 
 ## 8. Invariants, Insecure-Defaults Rejected, Unsafe Rationale
@@ -111,8 +111,8 @@ flowchart TD
 
 ```mermaid
 graph TD
-    U["Unit — rule predicates, velocity windows"] --> I["Integration — DB-backed screening/review suites"]
-    I --> E["E2E — e2e-ts UI + BFF proxy only"]
+    U["Unit - rule predicates, velocity windows"] --> I["Integration - DB-backed screening/review suites"]
+    I --> E["E2E - e2e-ts UI + BFF proxy only"]
 ```
 
 ## 10. Open Questions

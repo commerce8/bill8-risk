@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "bill8-risk",
-    "description": "Sentin8 Bill8:Risk — rules, screening, review queue.",
+    "description": "Sentin8 Bill8:Risk - rules, screening, review queue.",
     "license": {
       "name": "MIT OR Apache-2.0",
       "identifier": "MIT OR Apache-2.0"
@@ -35,7 +35,7 @@
         "tags": [
           "risk"
         ],
-        "summary": "`GET /v1/reviews` — list the review queue.",
+        "summary": "`GET /v1/reviews` - list the review queue.",
         "operationId": "list_reviews",
         "responses": {
           "200": {
@@ -67,7 +67,7 @@
         "tags": [
           "risk"
         ],
-        "summary": "`POST /v1/reviews/{id}/resolve` — resolve a review (idempotent).",
+        "summary": "`POST /v1/reviews/{id}/resolve` - resolve a review (idempotent).",
         "operationId": "resolve_review",
         "requestBody": {
           "content": {
@@ -100,7 +100,7 @@
         "tags": [
           "risk"
         ],
-        "summary": "`GET /v1/rules` — list rules.",
+        "summary": "`GET /v1/rules` - list rules.",
         "operationId": "list_rules",
         "responses": {
           "200": {
@@ -130,7 +130,7 @@
         "tags": [
           "risk"
         ],
-        "summary": "`POST /v1/rules` — create a rule.",
+        "summary": "`POST /v1/rules` - create a rule.",
         "operationId": "create_rule",
         "requestBody": {
           "content": {
@@ -169,7 +169,7 @@
         "tags": [
           "risk"
         ],
-        "summary": "`POST /v1/screenings` — screen a charge context (M2M from payments).\nThe evaluator is pure; the outcome persists as an auditable screening.",
+        "summary": "`POST /v1/screenings` - screen a charge context (M2M from payments).\nThe evaluator is pure; the outcome persists as an auditable screening.",
         "operationId": "screen",
         "requestBody": {
           "content": {
@@ -374,7 +374,7 @@
           },
           "outcome": {
             "type": "string",
-            "description": "Outcome (`allow` / `review` / `block`) — fail-closed on evaluation\nerror (a `block`, never an `allow`)."
+            "description": "Outcome (`allow` / `review` / `block`) - fail-closed on evaluation\nerror (a `block`, never an `allow`)."
           }
         }
       }

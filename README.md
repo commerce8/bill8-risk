@@ -1,4 +1,4 @@
-# Bill8:Risk — Fraud Prevention
+# Bill8:Risk - Fraud Prevention
 
 Fraud rules, velocity checks, sanctions screening, and the review queue.
 
@@ -27,11 +27,11 @@ graph TD
 
 ## 4. Key Traits and Data Structures
 
-- `Rule` — a declarative predicate (`amount > X`, `country in {…}`,
+- `Rule` - a declarative predicate (`amount > X`, `country in {…}`,
   `velocity > N`) with an action (`block` / `review` / `allow`).
-- `Review` — a queued case with a status (`open` → `approved` /
+- `Review` - a queued case with a status (`open` → `approved` /
   `declined`).
-- `Screening` — a sanctions/deny-list match result.
+- `Screening` - a sanctions/deny-list match result.
 
 ## 5. Rationale, Trade-offs, and Alternatives
 

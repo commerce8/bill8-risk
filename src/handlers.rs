@@ -3,7 +3,7 @@
 // SPDX-FileCopyrightText: Copyright Contributors to the Bill8:Risk
 // SPDX-License-Identifier: Apache-2.0
 
-//! Risk HTTP handlers — rules CRUD, screening (M2M), review resolution.
+//! Risk HTTP handlers - rules CRUD, screening (M2M), review resolution.
 
 use axum::extract::{Path, State};
 use axum::http::{HeaderMap, StatusCode};
@@ -28,7 +28,7 @@ pub struct AppState {
     pub pool: sqlx::PgPool,
     /// M2M-backed Bus client.
     pub bus_client: sentin8::bus::client::BusClient,
-    /// Shield policy engine — step 5 is the ONLY gate.
+    /// Shield policy engine - step 5 is the ONLY gate.
     pub policy: Arc<Engine>,
 }
 
@@ -66,7 +66,7 @@ pub async fn health() -> axum::Json<serde_json::Value> {
         "version": sentin8::build_info::id(), "build": sentin8::build_info::build_hash() }))
 }
 
-/// `POST /v1/rules` — create a rule.
+/// `POST /v1/rules` - create a rule.
 #[utoipa::path(
     post,
     path = "/v1/rules",
@@ -127,7 +127,7 @@ pub async fn create_rule(
     Ok(Json(row_to_rule(&row)))
 }
 
-/// `GET /v1/rules` — list rules.
+/// `GET /v1/rules` - list rules.
 #[utoipa::path(
     get,
     path = "/v1/rules",
@@ -166,7 +166,7 @@ pub async fn list_rules(
     Ok(Json(rows.iter().map(row_to_rule).collect()))
 }
 
-/// `POST /v1/screenings` — screen a charge context (M2M from payments).
+/// `POST /v1/screenings` - screen a charge context (M2M from payments).
 /// The evaluator is pure; the outcome persists as an auditable screening.
 #[utoipa::path(
     post,
@@ -255,7 +255,7 @@ pub async fn screen(
     Ok(Json(row_to_screening(&row)))
 }
 
-/// `GET /v1/reviews` — list the review queue.
+/// `GET /v1/reviews` - list the review queue.
 #[utoipa::path(
     get,
     path = "/v1/reviews",
@@ -304,7 +304,7 @@ pub async fn list_reviews(
     ))
 }
 
-/// `POST /v1/reviews/{id}/resolve` — resolve a review (idempotent).
+/// `POST /v1/reviews/{id}/resolve` - resolve a review (idempotent).
 #[utoipa::path(
     post,
     path = "/v1/reviews/{id}/resolve",
@@ -343,7 +343,7 @@ pub async fn resolve_review(
         .await
         .map_err(err_db)?;
 
-    // Guarded terminal transition — resolving twice is a 409, not a
+    // Guarded terminal transition - resolving twice is a 409, not a
     // second resolution (exactly-once semantics downstream).
     let result = sqlx::query(
         "UPDATE risk.reviews SET status = $1, resolved_at = now() WHERE id = $2 AND status = 'open'",
@@ -360,7 +360,7 @@ pub async fn resolve_review(
 
     // Payload completeness (architecture-principles §4.14): the
     // resolution event carries the CHARGE reference so the payments
-    // consumer completes the held charge WITHOUT reading risk tables —
+    // consumer completes the held charge WITHOUT reading risk tables -
     // the charge id sits in the originating screening's charge context.
     let screening = sqlx::query(
         "SELECT charge_context FROM risk.screenings WHERE id = (SELECT screening_id FROM risk.reviews WHERE id = $1)",
@@ -389,7 +389,7 @@ pub async fn resolve_review(
         "review_id": id,
         "status": status,
         // The held-charge reference (empty when the screening carried
-        // none — the consumer ignores resolutions without one).
+        // none - the consumer ignores resolutions without one).
         "charge_id": charge_ref,
     }))
     .execute(&mut *conn)

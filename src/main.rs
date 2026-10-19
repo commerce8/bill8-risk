@@ -3,7 +3,7 @@
 // SPDX-FileCopyrightText: Copyright Contributors to the Bill8:Risk
 // SPDX-License-Identifier: Apache-2.0
 
-//! Bill8:Risk binary — boots on the platform `sentin8::shell`.
+//! Bill8:Risk binary - boots on the platform `sentin8::shell`.
 
 #[allow(dead_code)]
 mod auth;

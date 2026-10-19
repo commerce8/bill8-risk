@@ -3,11 +3,11 @@
 // SPDX-FileCopyrightText: Copyright Contributors to the Bill8:Risk
 // SPDX-License-Identifier: Apache-2.0
 
-//! The rules evaluator — PURE and fail-closed.
+//! The rules evaluator - PURE and fail-closed.
 //!
 //! No I/O, no row locks: this module runs on the payments hot path.
 //! Any evaluation error (malformed params, unknown predicate, wrong
-//! types) evaluates to **block** — never allow. See risk DESIGN.md §8.
+//! types) evaluates to **block** - never allow. See risk DESIGN.md §8.
 
 use bill8::risk::contracts::Rule;
 use rust_decimal::Decimal;
@@ -15,7 +15,7 @@ use rust_decimal::Decimal;
 /// The evaluated outcome of a rule set against a charge context.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Decision {
-    /// No rule matched — proceed.
+    /// No rule matched - proceed.
     Allow,
     /// A rule matched with action=review.
     Review,
@@ -25,7 +25,7 @@ pub enum Decision {
 
 /// Evaluate the ordered rule set against a charge context. First match
 /// by priority wins. A MALFORMED rule (unknown predicate, bad params)
-/// evaluates to **block** regardless of its declared action — fail-closed
+/// evaluates to **block** regardless of its declared action - fail-closed
 /// means the declared `allow` of a rule that cannot be evaluated is
 /// never honored.
 pub fn evaluate(rules: &[Rule], context: &serde_json::Value) -> Decision {
@@ -34,7 +34,7 @@ pub fn evaluate(rules: &[Rule], context: &serde_json::Value) -> Decision {
             continue;
         }
         // A malformed rule matches with a forced block (the caller cannot
-        // distinguish "matched cleanly" from "failed to evaluate" — by
+        // distinguish "matched cleanly" from "failed to evaluate" - by
         // design, both block).
         let (matched, malformed) = matches_or_malformed(rule, context);
         if malformed {
@@ -55,7 +55,7 @@ pub fn evaluate(rules: &[Rule], context: &serde_json::Value) -> Decision {
 
 /// Whether a single rule matches the context, and whether the rule is
 /// malformed (unknown predicate or unparseable params/context). A
-/// malformed rule reports `matched=false, malformed=true` — the caller
+/// malformed rule reports `matched=false, malformed=true` - the caller
 /// blocks on it without consulting its action.
 fn matches_or_malformed(rule: &Rule, context: &serde_json::Value) -> (bool, bool) {
     match rule.predicate.as_str() {
@@ -144,7 +144,7 @@ mod tests {
     #[test]
     fn unknown_predicate_fails_closed() {
         let rules = vec![rule("nonsense", serde_json::json!({}), "allow")];
-        // Even an "allow" action with an unknown predicate blocks — the
+        // Even an "allow" action with an unknown predicate blocks - the
         // predicate itself is malformed.
         assert_eq!(evaluate(&rules, &ctx("1.00")), Decision::Block);
     }

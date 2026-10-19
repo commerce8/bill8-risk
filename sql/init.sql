@@ -3,7 +3,7 @@
 -- SPDX-FileCopyrightText: Copyright Contributors to the Bill8:Risk
 -- SPDX-License-Identifier: Apache-2.0
 
--- Bill8:Risk — the service's own schema `risk`: rules, screenings,
+-- Bill8:Risk - the service's own schema `risk`: rules, screenings,
 -- reviews. Evaluation fails closed: a malformed rule blocks.
 
 CREATE SCHEMA IF NOT EXISTS risk;

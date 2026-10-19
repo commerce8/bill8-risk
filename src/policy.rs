@@ -3,7 +3,7 @@
 // SPDX-FileCopyrightText: Copyright Contributors to the Bill8:Risk
 // SPDX-License-Identifier: Apache-2.0
 
-//! Shield policy integration for Bill8:Risk — step 5 is the ONLY gate.
+//! Shield policy integration for Bill8:Risk - step 5 is the ONLY gate.
 
 #[allow(unused_imports)]
 pub use sentin8::shield::runtime::{

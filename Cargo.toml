@@ -10,7 +10,7 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/commerce8/bill8-risk"
 rust-version = "1.85"
-description = "Sentin8 Bill8:Risk — rules, screening, review queue."
+description = "Sentin8 Bill8:Risk - rules, screening, review queue."
 
 [[bin]]
 name = "bill8-risk"
